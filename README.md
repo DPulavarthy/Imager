@@ -39,7 +39,7 @@ Options passed:
     blanks: false, // Ignore fully transparent values in the result [0, 0, 0, 0].
     lumina: true, // Add field in the returned data to see if the value is a light color or dark color.
     dimentions: true, // Return the dimentions of the image.
-    limit: 4 // How many values to pass in the result's data field.
+    limit: 4, // How many values to pass in the result's data field.
     occurrences: 10, // The least number of pixels required for it to be required in the result (Not applicable to paramter: raw).
     // occurrences: '15.00%' // Another option for occurrences (Needs to occur at least X percent in order to be available in result).
 }
