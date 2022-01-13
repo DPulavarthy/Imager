@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title> Image Uploader </title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #121212;
+            font-family: system-ui;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #FEFEFE;
+            height: 100vh;
+            user-select: none;
+        }
+
+        #viewable {
+            position: relative;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #FEFEFE;
+            text-align: center;
+            background-color: #121212;
+            cursor: pointer;
+            font-size: 50px;
+            font-weight: bold;
+        }
+
+        #notif {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 50px;
+            font-size: 35px;
+            font-weight: bold;
+            background: #43b581;
+            text-shadow: 1px 1px black;
+            padding: 5px;
+            transition-duration: 1s;
+            margin-bottom: -100px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        #viewable:hover {
+            background: #FEFEFE33;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="upload" method="POST" enctype="multipart/form-data" name="form">
+        <div id="viewable" onclick="document.getElementById('upfile').click()"> Upload an image! </div>
+        <div style='height: 0px;width: 0px; overflow:hidden;'>
+            <input id="upfile" type="file" value="upload" onchange="uploading(this)" accept="image/*" name="image" />
+        </div>
+    </form>
+    <div id="notif"></div>
+
+    <script>
+        function uploading(file) {
+            if (!file.value) return
+            document.getElementById('viewable').innerHTML = 'Uploading...'
+            let notification = document.getElementById('notif')
+            notification.innerHTML = `Uploading: ${file.value.split('\\').pop()}`
+            notification.style.marginBottom = 0
+            document.form.submit()
+        }
+    </script>
+</body>
+
+</html>
