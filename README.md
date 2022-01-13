@@ -14,7 +14,7 @@ This would just be a small little project showcasing how simplie it can be to pr
 
 ### Result structure
 The following is the base result, the least amount of data you can get from the module:
-```json
+```js
 {
   data: [ // An array of top RGBA values (Including transparent pixels).
     {
@@ -46,7 +46,7 @@ Options passed:
 ```
 Result:
 
-```json
+```js
 {
   "data": [ // An array of top HEXA values (Including transparent).
     {
