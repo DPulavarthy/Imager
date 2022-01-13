@@ -9,7 +9,9 @@ This would just be a small little project showcasing how simplie it can be to pr
 
 ### Included items
 `src/index.js`: Image parser and data generator.
+<br />
 `src/test.js`: Example code on how to use this module.
+<br />
 `api/`: An [Express](https://www.npmjs.com/package/express) example on how this can be used in the real world.
 
 ### Result structure
