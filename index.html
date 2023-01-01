@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Color Picker</title>
+    <style>[preload]{position:fixed;top:0;left:0;width:100%;height:100%;background:#111;z-index:999;justify-content:center;align-items:center;font-size:25px;font-weight:700;display:none}[input] div,[input] input,[input] label,[input] span{height:60%;padding:5px 10px;color:#111;font-weight:700}[icon],[image] img,[types] div{filter:var(--shadow)}[click],[click] div>div,[hover],[hover] div>div,[image],[input],[types],body{display:flex}:root{--shadow:drop-shadow(0 0 5px #000000)}body{margin:0;background:#111;font:15px system-ui;color:silver;height:100vh;justify-content:center;align-items:center}main{width:1000px;height:550px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto minmax(0,2fr) minmax(0,1fr) minmax(0,2fr) minmax(0,1fr);grid-template-areas:"p p" "i h" "i h" "i c" "t c";grid-gap:5px}main>div{background:#212121;border:2px solid #313131;border-radius:5px}[input]{grid-area:p;height:50px}input[type=file]{display:none}[input] div,[input] label,[input] span{margin:5px;display:flex;align-items:center;background:#e18499;line-height:1;border-radius:3px;white-space:nowrap;cursor:pointer;transition-duration:.2s;transition-delay:50ms;user-select:none}[input] div:hover,[input] label:hover{background:#111;color:#e18499}[input] span{font-size:18px;text-transform:uppercase;background:0 0;color:silver;opacity:.7;cursor:default}[input] input{width:100%;margin:5px 2px;background:silver;border:none;border-radius:3px;font-size:15px;outline:0}[image]{grid-area:i;justify-content:center;align-items:center}[image] img{width:auto;height:auto;max-width:97%;max-height:97%;object-fit:contain;cursor:crosshair}[types]{grid-area:t;padding:0 4px}[types] div{width:61.3px;height:80%;aspect-ratio:1/1;margin:8px 4px;border-radius:3px;cursor:pointer}[icon]{width:60px;min-width:60px;height:93%;margin:8px;border-radius:3px}[hover]{grid-area:h;user-select:none}[click]>div:not([icon]),[hover]>div:not([icon]){margin:10px}[click] div>div,[hover] div>div{padding:3px 5px;background:#111;border-radius:3px;margin:5px 20px;align-items:center;font-family:monospace;white-space:nowrap}[click] div>div:before,[hover] div>div:before{content:attr(before);font-size:20px;font-weight:700;text-transform:uppercase;opacity:.5;user-select:none;margin:0 10px 0 -30px;font-family:system-ui}[hex]{padding-left:70px}[hex] div:first-child:before{margin-left:-55px}[hex] div:nth-child(2):before,[hex] div:nth-child(6):before{margin-left:-70px}[hex] div:nth-child(3):before{margin-left:-93px}[hex] div:nth-child(4):before{margin-left:-100px}[hex] div:nth-child(5):before{margin-left:-57px}[click]{grid-area:c}</style>
+</head>
+
+<body>
+    <div preload> Processing Image... </div>
+    <main>
+        <div input>
+            <label for="upload">
+                Upload Image
+            </label>
+            <input type="file" accept="img/*" id="upload" onchange="upload(event)" />
+            <span>or</span>
+            <input type="text" placeholder="Input image URL">
+            <div onclick="read()">Submit</div>
+        </div>
+        <div image>
+            <img />
+        </div>
+        <div types>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div hover>
+            <div icon></div>
+            <div hex>
+                <div before="hex:"></div>
+                <div before="hexa:"></div>
+                <div before="lumina:"></div>
+                <div before="occurs:"></div>
+                <div before="rgb:"></div>
+                <div before="rgba:"></div>
+            </div>
+            <div rgb>
+                <div before="r:"></div>
+                <div before="g:"></div>
+                <div before="b:"></div>
+                <div before="a:"></div>
+            </div>
+        </div>
+        <div click>
+            <div icon></div>
+            <div hex>
+                <div before="hex:"></div>
+                <div before="hexa:"></div>
+                <div before="lumina:"></div>
+                <div before="occurs:"></div>
+                <div before="rgb:"></div>
+                <div before="rgba:"></div>
+            </div>
+            <div rgb>
+                <div before="r:"></div>
+                <div before="g:"></div>
+                <div before="b:"></div>
+                <div before="a:"></div>
+            </div>
+        </div>
+    </main>
+    <script>const $ = (e, t) => (t || document).querySelector(e), $$ = (e, t) => (t || document).querySelectorAll(e); class Imager { static config = { type: "hexa", order: "forwards", raw: !1, stats: !1, blanks: !1, lumina: !1, dimensions: !1, limit: 5, occurrences: 10 }; constructor(e, t, { hover: a, click: r, load: i }) { if (this.ping = new Date, this.image = "string" == typeof e ? $(e) : e, !this.image) throw Error("Invalid image query."); Imager.onhover = a, Imager.onclick = r, Imager.onload = i, this.image.onmousemove = this.#a, this.image.onclick = this.#b, this.image.onload = this.#c, Imager.config = { ...Imager.config, ...t } } update = { image: e => this.image = "string" == typeof e ? $(e) : e, config: e => this.config = { ...Imager.config, ...e } }; static async process(e, t) { return new Promise(async (a, r) => { let i = new Date, s = { data: [] }, n = new Map; t = { ...Imager.config, ...t }; let o = "string" == typeof e ? $(e) : e.target ?? e; o.crossOrigin && "Anonymous" === o.crossOrigin || (o = await Imager.clone(o)); let c = document.createElement("canvas"); c.width = o.width, c.height = o.height; let l = c.getContext("2d", { willReadFrequently: !0 }); l.drawImage(o, 0, 0); let [g, m] = [[], []]; for (let h = 0; h < o.height; h++)for (let u = 0; u < o.width; u++)g.push(...l.getImageData(u, h, 1, 1).data); for (let f = 0; f < g.length; f += 4) { let _ = g.slice(f, f + 4).join(); t.raw && m.push(_.split(",")); let d = n.get(_); n.set(_, d ? ++d : 1) } n = new Map([...n.entries()].sort((e, a) => "forwards" === t.order ? a[1] - e[1] : e[1] - a[1])), t.stats && (s.bytes = { raw: 8 * g.length, formatted: Imager.bytify(8 * g.length) }, s.total = n.size, s.options = t), "number" == typeof t.occurrences ? n = new Map([...n.entries()].slice(0, t.occurrences)) : t.occurrences.match(/^[1-9]?[0-9]\.[0-9]{2}%|100\.00%/g)?.some(e => e) && (n = new Map([...n.entries()].filter(e => `${(100 * e[1] / (g.length / 4)).toFixed(2)}%` > t.occurrences))), t.occurrences && "number" != typeof t.occurrences && !t.occurrences.match(/^[1-9]?[0-9]\.[0-9]{2}%|100\.00%/g)?.some(e => e) && r("Invalid format for occurance limit, please use: >0 (Number) or [0.00%-100.00%] (String)"); let p = t.limit; for (let y of [...n.keys()]) if (p > 0) { if (t.blanks && "0,0,0,0" === y) continue; p--; let [w, I] = [{ value: null, luminous: !1, occurrence: "0.00%", count: 0 }, y.split(",")]; switch (t.type) { case "hexa": w.value = `#${Imager.hexify(I.slice(0, -1))}${Imager.alphaify(100 * parseInt(I[3]) / 255)}`.toUpperCase(); break; case "hex": w.value = `#${Imager.hexify(I.slice(0, -1))}`.toUpperCase(); break; case "rgb": w.value = I.slice(0, -1).map(e => +e); break; default: w.value = I.map(e => +e), w.value[3] /= 255 }t.lumina ? w.luminous = Imager.luminosity(...y.split(",").slice(0, -1).map(e => +e)) : delete w.luminous, t.stats ? w.count = n.get(y) : delete w.count, w.occurrence = `${(100 * n.get(y) / (g.length / 4)).toFixed(2)}%`, s.data.push(w) } else break; if (t.raw) { for (let x = 0; x < m.length; x++) { let b = m[x].slice(0, -1); switch (t.type) { case "hexa": m[x] = `#${Imager.hexify(b)}${Imager.alphaify(100 * m[x][3] / 255)}`.toUpperCase(); break; case "hex": m[x] = `#${Imager.hexify(b)}`.toUpperCase(); break; case "rgb": m[x] = b.map(e => +e); break; default: m[x][3] /= 255 } } s.raw = m } t.dimensions && (s.dimensions = { width: o.width, height: o.height }), t.stats && (s.ping = new Date - i), c.remove(), a(s) }) } #a(e) { Imager.pixel(e, e.offsetX, e.offsetY).then(Imager.onhover) } #b(t) { console.log(t), Imager.pixel(t, t.offsetX, t.offsetY).then(Imager.onclick) } #c(a) { Imager.process(a).then(Imager.onload) } static pixel(e, t, a) { return new Promise(async r => { let [i, s, n] = [e.target, e.target.clientWidth, e.target.clientHeight]; i.crossOrigin && "Anonymous" === i.crossOrigin || (i = await Imager.clone(i)); let o = document.createElement("canvas"); console.log(s, n, t, a), o.width = s, o.height = n; let c = o.getContext("2d", { willReadFrequently: !0 }); c.drawImage(i, 0, 0, s, n); let l = [...c.getImageData(t, a, 1, 1).data]; o.remove(), r(l) }) } static clone(e) { return new Promise(async t => { let a = new Image; a.crossOrigin = "Anonymous", a.src = e.src, a.onload = () => t(a) }) } static alphaify(e) { return Math.round(e / 100 * 255).toString(16).padStart(2, "0").toUpperCase() } static hexify(e) { return e.map(e => { let t = parseInt(e).toString(16); return 1 == t.length ? `0${t}` : t }).join("") } static luminosity(e, t, a) { return Math.sqrt(.299 * (e * e) + .587 * (t * t) + .114 * (a * a)) > 127.5 } static bytify(e) { return e >= 1e9 ? `${(e / 1e9).toFixed(2)}GB` : e >= 1e6 ? `${(e / 1e6).toFixed(2)}MB` : e >= 1e3 ? `${(e / 1e3).toFixed(2)}KB` : 1 == e ? `${e} byte` : `${e} bytes` } }</script>
+    <script>
+        const { style } = document.documentElement
+
+        async function upload(event) {
+
+            const read = file => {
+                return new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.onload = e => resolve(e.target.result);
+                    reader.onerror = _ => resolve(void 0);
+                    file ? reader.readAsDataURL(file) : resolve(void 0);
+                });
+            };
+
+            preload()
+            const url = await read(event.target.files[0]);
+            url && ($('img').src = url);
+        }
+
+        function read() {
+            preload()
+            $('img').src = $('input[type=text]').value
+        }
+
+        new Imager('img', { stats: !0, lumina: !0, blanks: !0, limit: 7, type: 'rgba' }, {
+            load: res => {
+                res.data.forEach((set, i) => {
+                    const div = $(`[types] div:nth-child(${i + 1})`)
+                    div.style.background = `rgba(${set.value.join()})`;
+                    div.setAttribute('data', JSON.stringify(set));
+                });
+                preload(true)
+            },
+
+            click: data => {
+                const luminous = Imager.luminosity(...data.slice(0, -1));
+                data[3] = [0, 1].includes(data[3] / 255) ? data[3] / 255 : (data[3] / 255).toFixed(1)
+                $('[click] > [icon]').style.background = `rgba(${data.join()})`;
+                $('[click] > [icon]').style.filter = `drop-shadow(0 0 5px ${luminous ? '#000000' : '#FFFFFF'})`;
+                $('[click] > [hex] > div:nth-child(1)').innerHTML = `#${Imager.hexify(data.slice(0, -1))}`.toUpperCase();
+                $('[click] > [hex] > div:nth-child(2)').innerHTML = `#${Imager.hexify(data.slice(0, -1))}${Imager.alphaify((data[3] * 100) / 255)}`.toUpperCase();
+                $('[click] > [hex] > div:nth-child(3)').innerHTML = luminous ? 'Light' : 'Dark';
+                $('[click] > [hex] > div:nth-child(4)').innerHTML = 'N/A';
+                $('[click] > [hex] > div:nth-child(5)').innerHTML = `rgb(${data.slice(0, -1).join(', ')})`;
+                $('[click] > [hex] > div:nth-child(6)').innerHTML = `rgba(${data.join(', ')})`;
+                $('[click] > [rgb] > div:nth-child(1)').innerHTML = data[0];
+                $('[click] > [rgb] > div:nth-child(2)').innerHTML = data[1];
+                $('[click] > [rgb] > div:nth-child(3)').innerHTML = data[2];
+                $('[click] > [rgb] > div:nth-child(4)').innerHTML = data[3];
+            },
+
+            hover: data => {
+                const luminous = Imager.luminosity(...data.slice(0, -1));
+                data[3] = [0, 1].includes(data[3] / 255) ? data[3] / 255 : (data[3] / 255).toFixed(1)
+                style.setProperty('--shadow', `drop-shadow(0 0 5px ${luminous ? '#000000' : '#FFFFFF'})`);
+                $('[hover] > [icon]').style.background = `rgba(${data.join()})`;
+                $('[hover] > [hex] > div:nth-child(1)').innerHTML = `#${Imager.hexify(data.slice(0, -1))}`.toUpperCase();
+                $('[hover] > [hex] > div:nth-child(2)').innerHTML = `#${Imager.hexify(data.slice(0, -1))}${Imager.alphaify((data[3] * 100) / 255)}`.toUpperCase();
+                $('[hover] > [hex] > div:nth-child(3)').innerHTML = luminous ? 'Light' : 'Dark';
+                $('[hover] > [hex] > div:nth-child(4)').innerHTML = 'N/A';
+                $('[hover] > [hex] > div:nth-child(5)').innerHTML = `rgb(${data.slice(0, -1).join(', ')})`;
+                $('[hover] > [hex] > div:nth-child(6)').innerHTML = `rgba(${data.join(', ')})`;
+                $('[hover] > [rgb] > div:nth-child(1)').innerHTML = data[0];
+                $('[hover] > [rgb] > div:nth-child(2)').innerHTML = data[1];
+                $('[hover] > [rgb] > div:nth-child(3)').innerHTML = data[2];
+                $('[hover] > [rgb] > div:nth-child(4)').innerHTML = data[3];
+            }
+        })
+
+        $$('[types] > div').forEach(div => {
+            div.onmouseover = event => {
+                if (!event.target.getAttribute('data')) return;
+                const color = event.target.style.background;
+                const data = JSON.parse(event.target.getAttribute('data'));
+                data.value[3] = [0, 1].includes(data.value[3]) ? data.value[3] : data.value[3].toFixed(1);
+                style.setProperty('--shadow', `drop-shadow(0 0 5px ${data.luminous ? '#000000' : '#FFFFFF'})`);
+                $('[hover] > [icon]').style.background = color;
+                $('[hover] > [hex] > div:nth-child(1)').innerHTML = `#${Imager.hexify(data.value.slice(0, -1))}`.toUpperCase();
+                $('[hover] > [hex] > div:nth-child(2)').innerHTML = `#${Imager.hexify(data.value.slice(0, -1))}${Imager.alphaify((data.value[3] * 100) / 255)}`.toUpperCase();
+                $('[hover] > [hex] > div:nth-child(3)').innerHTML = data.luminous !== null ? (data.luminous ? 'Light' : 'Dark') : 'N/A';
+                $('[hover] > [hex] > div:nth-child(4)').innerHTML = `${data.occurrence} (${data.count.toLocaleString()})`;
+                $('[hover] > [hex] > div:nth-child(5)').innerHTML = `rgb(${data.value.slice(0, -1).join(', ')})`;
+                $('[hover] > [hex] > div:nth-child(6)').innerHTML = `rgba(${data.value.join(', ')})`;
+                $('[hover] > [rgb] > div:nth-child(1)').innerHTML = data.value[0];
+                $('[hover] > [rgb] > div:nth-child(2)').innerHTML = data.value[1];
+                $('[hover] > [rgb] > div:nth-child(3)').innerHTML = data.value[2];
+                $('[hover] > [rgb] > div:nth-child(4)').innerHTML = data.value[3];
+            }
+
+            div.onclick = event => {
+                if (!event.target.getAttribute('data')) return
+                const color = event.target.style.background;
+                const data = JSON.parse(event.target.getAttribute('data'));
+                data.value[3] = [0, 1].includes(data.value[3]) ? data.value[3] : data.value[3].toFixed(1);
+                $('[click] > [icon]').style.background = color;
+                $('[click] > [icon]').style.filter = `drop-shadow(0 0 5px ${data.luminous ? '#000000' : '#FFFFFF'})`;
+                $('[click] > [hex] > div:nth-child(1)').innerHTML = `#${Imager.hexify(data.value.slice(0, -1))}`.toUpperCase();
+                $('[click] > [hex] > div:nth-child(2)').innerHTML = `#${Imager.hexify(data.value.slice(0, -1))}${Imager.alphaify((data.value[3] * 100) / 255)}`.toUpperCase();
+                $('[click] > [hex] > div:nth-child(3)').innerHTML = data.luminous !== null ? (data.luminous ? 'Light' : 'Dark') : 'N/A';
+                $('[click] > [hex] > div:nth-child(4)').innerHTML = `${data.occurrence} (${data.count.toLocaleString()})`;
+                $('[click] > [hex] > div:nth-child(5)').innerHTML = `rgb(${data.value.slice(0, -1).join(', ')})`;
+                $('[click] > [hex] > div:nth-child(6)').innerHTML = `rgba(${data.value.join(', ')})`;
+                $('[click] > [rgb] > div:nth-child(1)').innerHTML = data.value[0];
+                $('[click] > [rgb] > div:nth-child(2)').innerHTML = data.value[1];
+                $('[click] > [rgb] > div:nth-child(3)').innerHTML = data.value[2];
+                $('[click] > [rgb] > div:nth-child(4)').innerHTML = data.value[3];
+            }
+        })
+
+        function preload(hide) {
+            $('[preload]').style.display = hide ? 'none' : 'flex';
+        }
+
+        document.addEventListener('keypress', e => e.key === 'Enter' && read());
+    </script>
+</body>
+
+</html>
